@@ -1,0 +1,5 @@
+package com.railconnect.authservice.service;
+
+public class UserService {
+
+}

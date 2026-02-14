@@ -1,0 +1,38 @@
+package com.railconnect.trainservice.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.railconnect.trainservice.entity.Train;
+import com.railconnect.trainservice.service.TrainService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/trains")
+@CrossOrigin
+public class TrainController {
+
+    @Autowired
+    private TrainService service;
+
+    // Add Train (Later restrict to ADMIN)
+    @PostMapping("/add")
+    public Train addTrain(@RequestBody Train train) {
+        return service.addTrain(train);
+    }
+
+    // Get All Trains
+    @GetMapping("/all")
+    public List<Train> getAllTrains() {
+        return service.getAllTrains();
+    }
+
+    // Search Trains
+    @GetMapping("/search")
+    public List<Train> searchTrains(
+            @RequestParam String source,
+            @RequestParam String destination) {
+
+        return service.searchTrains(source, destination);
+    }
+}

@@ -1,0 +1,5 @@
+package com.railconnect.authservice.dto;
+
+public class LoginRequest {
+
+}

@@ -1,0 +1,5 @@
+package com.railconnect.authservice.config;
+
+public class CorsConfig {
+
+}

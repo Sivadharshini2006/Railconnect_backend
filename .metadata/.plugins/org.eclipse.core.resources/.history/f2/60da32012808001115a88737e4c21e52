@@ -1,0 +1,5 @@
+package com.railconnect.authservice.entity;
+
+public class User {
+
+}

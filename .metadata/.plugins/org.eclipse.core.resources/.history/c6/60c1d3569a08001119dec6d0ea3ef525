@@ -1,0 +1,5 @@
+package com.railconnect.trainservice.controller;
+
+public class TrainController {
+
+}

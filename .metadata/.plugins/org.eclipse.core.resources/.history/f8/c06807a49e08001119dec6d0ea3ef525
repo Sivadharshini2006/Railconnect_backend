@@ -1,0 +1,5 @@
+package com.railconnect.trainservice.service;
+
+public class SecurityConfig {
+
+}

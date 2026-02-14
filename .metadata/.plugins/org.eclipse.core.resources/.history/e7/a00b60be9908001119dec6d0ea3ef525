@@ -1,0 +1,5 @@
+package com.railconnect.trainservice.entity;
+
+public class Train {
+
+}
