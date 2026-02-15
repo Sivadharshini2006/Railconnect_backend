@@ -1,50 +1,45 @@
 package com.railconnect.trainservice.service;
 
+import com.railconnect.trainservice.model.Train;
+import com.railconnect.trainservice.repository.TrainRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.railconnect.trainservice.entity.Train;
-import com.railconnect.trainservice.repository.TrainRepository;
-
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrainService {
 
     @Autowired
-    private TrainRepository repo;
-    @Autowired
-    private TrainRepository trainRepository;
-
+    private TrainRepository repository;
 
     public Train addTrain(Train train) {
-        return repo.save(train);
-    }
-
-    public List<Train> getAllTrains() {
-        return repo.findAll();
-    }
-    
-    public Train updateTrain(String id, Train updatedTrain) {
-
-        Train existingTrain = trainRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Train not found"));
-
-        existingTrain.setTrainNumber(updatedTrain.getTrainNumber());
-        existingTrain.setTrainName(updatedTrain.getTrainName());
-        existingTrain.setSource(updatedTrain.getSource());
-        existingTrain.setDestination(updatedTrain.getDestination());
-        existingTrain.setTotalSeats(updatedTrain.getTotalSeats());
-        existingTrain.setDepartureTime(updatedTrain.getDepartureTime());
-        existingTrain.setArrivalTime(updatedTrain.getArrivalTime());
-
-        return trainRepository.save(existingTrain);
-    }
-    public void deleteTrain(String id) {
-        trainRepository.deleteById(id);
+        if(repository.existsByTrainNumber(train.getTrainNumber())){
+            throw new RuntimeException("Train already exists!");
+        }
+        return repository.save(train);
     }
 
     public List<Train> searchTrains(String source, String destination) {
-        return repo.findBySourceAndDestination(source, destination);
+        return repository.findBySourceAndDestination(source, destination);
+    }
+
+    public List<Train> getAllTrains() {
+        return repository.findAll();
+    }
+    
+    public Train updateTrain(String id, Train updatedTrain) {
+        return repository.findById(id).map(train -> {
+            train.setTrainName(updatedTrain.getTrainName());
+            train.setSource(updatedTrain.getSource());
+            train.setDestination(updatedTrain.getDestination());
+            train.setTotalSeats(updatedTrain.getTotalSeats());
+            train.setRunningDays(updatedTrain.getRunningDays());
+            return repository.save(train);
+        }).orElseThrow(() -> new RuntimeException("Train not found"));
+    }
+
+    public void deleteTrain(String id) {
+        repository.deleteById(id);
     }
 }

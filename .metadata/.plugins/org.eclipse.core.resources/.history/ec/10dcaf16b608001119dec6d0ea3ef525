@@ -1,5 +1,0 @@
-package com.railconnect.trainservice.config;
-
-public class SwaggerConfig {
-
-}
