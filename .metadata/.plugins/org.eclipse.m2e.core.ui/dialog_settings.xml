@@ -2,6 +2,9 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
+			<item value="C:\Users\Siva_\Documents\full stack front\railconnect_backend\eurekaserver"/>
+			<item value="C:\Users\Siva_\Documents\full stack front\railconnect_backend\tteservice"/>
+			<item value="C:\Users\Siva_\Documents\full stack front\railconnect_backend\chartservice"/>
 			<item value="C:\Users\Siva_\Documents\full stack front\railconnect_backend\bookingservice"/>
 			<item value="C:\Users\Siva_\Documents\full stack front\railconnect_backend\trainservice"/>
 			<item value="C:\Users\Siva_\Documents\full stack front\railconnect_backend\authservice"/>

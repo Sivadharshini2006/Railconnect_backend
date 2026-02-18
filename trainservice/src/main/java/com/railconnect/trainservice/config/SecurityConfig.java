@@ -29,11 +29,11 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // 1. PUBLIC: Anyone can view trains or search
+               
                 .requestMatchers(HttpMethod.GET, "/api/trains/all").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/trains/search").permitAll()
 
-                // 2. ADMIN ONLY: Must have ROLE_ADMIN to change data
+          
                 .requestMatchers("/api/trains/add/").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/trains/update/*").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/trains/delete/*").hasAuthority("ROLE_ADMIN")

@@ -14,7 +14,7 @@ public class TrainController {
     @Autowired
     private TrainService service;
 
-    // Postman: GET http://localhost:8082/api/trains/all
+    
     @GetMapping("/all")
     public ResponseEntity<List<Train>> getAll() {
         return ResponseEntity.ok(service.getAllTrains());
@@ -24,18 +24,18 @@ public class TrainController {
         return ResponseEntity.ok(service.addTrain(train));
     }
 
-    // Postman: POST http://localhost:8082/api/trains/update/1
-    @PostMapping("/update/{id}") // NOTE: This is POST, not PUT
+
+    @PostMapping("/update/{id}")
     public ResponseEntity<Train> updateTrain(@PathVariable String id, @RequestBody Train train) {
         return ResponseEntity.ok(service.updateTrain(id, train));
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTrain(@PathVariable String id) {
-        service.deleteTrain(id); // This calls the delete logic in your Service
+        service.deleteTrain(id); 
         return ResponseEntity.ok("Train with ID " + id + " deleted successfully");
     }
 
-    // Postman: GET http://localhost:8082/api/trains/search?source=Chennai&destination=Delhi
+    
     @GetMapping("/search")
     public ResponseEntity<List<Train>> search(@RequestParam String source, @RequestParam String destination) {
         return ResponseEntity.ok(service.searchTrains(source, destination));

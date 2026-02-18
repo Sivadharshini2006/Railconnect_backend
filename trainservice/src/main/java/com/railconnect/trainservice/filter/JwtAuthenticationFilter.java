@@ -1,6 +1,6 @@
 package com.railconnect.trainservice.filter;
 
-import com.railconnect.trainservice.util.JwtUtil; // Check your package name here
+import com.railconnect.trainservice.util.JwtUtil; 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -60,10 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     
-                    System.out.println("✅ SecurityContext successfully set for: " + username);
+                    System.out.println("SecurityContext successfully set for: " + username);
                 }
             } catch (Exception e) {
-                System.out.println("❌ JWT Auth Failed: " + e.getMessage());
+                System.out.println(" JWT Auth Failed: " + e.getMessage());
             }
         }
         chain.doFilter(request, response);
