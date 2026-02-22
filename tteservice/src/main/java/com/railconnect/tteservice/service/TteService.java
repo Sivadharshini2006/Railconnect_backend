@@ -17,7 +17,7 @@ public class TteService {
 
     // Fixes "undefined getWaitlist" error
     public List<Booking> getWaitlist(String trainId, String date) {
-        List<Booking> bookings = bookingRepository.findByTrainIdAndDate(trainId, date);
+        List<Booking> bookings = bookingRepository.findByTrainNameAndJourneyDate(trainId, date);
         bookings.forEach(b -> {
             // b.getPassengers() will now work after manual generation!
             if (b.getPassengers() != null) {
@@ -42,7 +42,7 @@ public class TteService {
 
     // Fixes "undefined generateChart" error
     public Chart generateChart(String trainId, String date) {
-        List<Booking> bookings = bookingRepository.findByTrainIdAndDate(trainId, date);
+        List<Booking> bookings = bookingRepository.findByTrainNameAndJourneyDate(trainId, date);
         Chart chart = new Chart();
         chart.setTrainId(trainId);
         chart.setDate(date);

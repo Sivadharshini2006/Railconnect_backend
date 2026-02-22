@@ -4,10 +4,9 @@ import com.railconnect.tteservice.entity.*;
 import com.railconnect.tteservice.service.TteService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
 @RestController
 @RequestMapping("/tte")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173") // Vite
 public class TteController {
 
     private final TteService tteService;
@@ -17,31 +16,25 @@ public class TteController {
     }
 
     @GetMapping("/waitlist")
-    public List<Booking> getWaitlist(
-            @RequestParam String trainId,
-            @RequestParam String date) {
+    public List<Booking> getWaitlist(@RequestParam String trainName,
+                                    @RequestParam String journeyDate) {
+        return tteService.getWaitlist(trainName, journeyDate);
+    }
 
-        return tteService.getWaitlist(trainId, date);
+    @PostMapping("/chart")
+    public Chart generateChart(@RequestParam String trainName,
+                              @RequestParam String journeyDate) {
+        return tteService.generateChart(trainName, journeyDate);
     }
 
     @PutMapping("/allot/{pnr}")
     public String allotSeat(@PathVariable String pnr) {
-
         tteService.allotSeat(pnr);
         return "Seat Allotted Successfully";
     }
 
-    @PostMapping("/chart")
-    public Chart generateChart(
-            @RequestParam String trainId,
-            @RequestParam String date) {
-
-        return tteService.generateChart(trainId, date);
-    }
-
     @GetMapping("/verify/{pnr}")
     public Booking verifyTicket(@PathVariable String pnr) {
-
         return tteService.verifyTicket(pnr);
     }
 }

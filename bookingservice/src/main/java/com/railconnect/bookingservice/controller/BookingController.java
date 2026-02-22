@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/booking")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class BookingController {
 
     @Autowired
@@ -25,16 +25,26 @@ public class BookingController {
     public ResponseEntity<Booking> checkStatus(@PathVariable String pnr) {
         return ResponseEntity.ok(bookingService.getBookingByPnr(pnr));
     }
- 
+    @GetMapping("/pnr/{pnr}")
+    public ResponseEntity<Booking> getByPnr(@PathVariable String pnr) {
+        Booking b = bookingService.getBookingByPnr(pnr.trim());
+        return ResponseEntity.ok(b);
+    }
     
     
     @GetMapping("/user/{email}")
-    public ResponseEntity<List<Booking>> userHistory(@PathVariable String email) {
-        return ResponseEntity.ok(bookingService.getBookingsByUser(email));
+    public List<Booking> byUser(@PathVariable String email){
+        return bookingService.getBookingsByUser(email);
     }
 
     @PutMapping("/cancel/{pnr}")
     public ResponseEntity<Booking> cancel(@PathVariable String pnr) {
         return ResponseEntity.ok(bookingService.cancelBooking(pnr));
     }
+    @PutMapping("/confirm/{pnr}")
+    public ResponseEntity<Booking> confirm(@PathVariable String pnr) {
+        return ResponseEntity.ok(bookingService.confirmBooking(pnr));
+    }
+    
+ 
 }

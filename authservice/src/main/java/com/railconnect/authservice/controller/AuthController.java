@@ -1,6 +1,6 @@
 package com.railconnect.authservice.controller;
 
-
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import com.railconnect.authservice.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     @Autowired
@@ -34,14 +34,14 @@ public class AuthController {
 
         user.setId(null);   // Important
         user.setPassword(encoder.encode(user.getPassword()));
-
+        user.setRole(user.getRole().toUpperCase());
         repo.save(user);
 
         return "User Registered Successfully";
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public Map<String, String> login(@RequestBody LoginRequest request) {
 
         User dbUser = repo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
@@ -50,6 +50,14 @@ public class AuthController {
             throw new RuntimeException("Invalid Password");
         }
 
-        return jwtUtil.generateToken(dbUser.getEmail(), dbUser.getRole());
+        String token = jwtUtil.generateToken(
+                dbUser.getEmail(),
+                dbUser.getRole()
+        );
+
+        return Map.of(
+                "token", token,
+                "role", dbUser.getRole()
+        );
     }
 }

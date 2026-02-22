@@ -1,5 +1,0 @@
-package com.railconnect.authservice.repository;
-
-public class UserRepository {
-
-}

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -25,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -32,30 +33,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7).trim(); // trim() removes accidental spaces
+            String token = authHeader.substring(7).trim();
             
             try {
                 Claims claims = jwtUtil.extractAllClaims(token);
                 String username = claims.getSubject();
                 
-                // Try to get role from "role" or "roles" or "authorities"
+                // 1. Better Role Extraction (Handles Strings or Lists)
                 Object roleObj = claims.get("role");
                 if (roleObj == null) roleObj = claims.get("roles");
                 
-                String role = (roleObj != null) ? roleObj.toString() : "";
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-                // 🔍 DEBUG: CHECK YOUR CONSOLE FOR THESE TWO LINES
+                if (roleObj instanceof List<?>) {
+                    // If the token has a list of roles
+                    ((List<?>) roleObj).forEach(role -> {
+                        String r = role.toString().toUpperCase();
+                        authorities.add(new SimpleGrantedAuthority(r.startsWith("ROLE_") ? r : "ROLE_" + r));
+                    });
+                } else if (roleObj != null) {
+                    // If the token has a single string role
+                    String r = roleObj.toString().toUpperCase();
+                    authorities.add(new SimpleGrantedAuthority(r.startsWith("ROLE_") ? r : "ROLE_" + r));
+                }
+
+                // 🔍 DEBUG: Check these in your Eclipse Console
                 System.out.println("USER: " + username);
-                System.out.println("ROLE FROM TOKEN: " + role);
+                System.out.println("AUTHORITIES SET: " + authorities);
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    // Ensure the role starts with ROLE_ for .hasRole() to work
-                    String finalRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
-                    
-                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(finalRole);
-
+                    // 2. Use the 3-parameter constructor (Principal, Credentials, Authorities)
+                    // This sets the user as 'Authenticated' in Spring Security
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            username, null, List.of(authority));
+                            username, null, authorities);
                     
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -63,9 +73,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println("SecurityContext successfully set for: " + username);
                 }
             } catch (Exception e) {
-                System.out.println(" JWT Auth Failed: " + e.getMessage());
+                System.out.println("JWT Auth Failed: " + e.getMessage());
             }
         }
+        // Always continue the filter chain
         chain.doFilter(request, response);
     }
 }
